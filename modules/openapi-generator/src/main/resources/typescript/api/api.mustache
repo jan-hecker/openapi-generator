@@ -144,11 +144,23 @@ export class {{classname}}RequestFactory extends BaseAPIRequestFactory {
             "{{{mediaType}}}"{{^-last}},{{/-last}}
         {{/consumes}}]);
         requestContext.setHeaderParam("Content-Type", contentType);
+        {{#isBinary}}
+        {{#platforms}}
+        {{#node}}
+        requestContext.setBody({{paramName}}.data);
+        {{/node}}
+        {{^node}}
+        requestContext.setBody({{paramName}});
+        {{/node}}
+        {{/platforms}}
+        {{/isBinary}}
+        {{^isBinary}}
         const serializedBody = ObjectSerializer.stringify(
             ObjectSerializer.serialize({{paramName}}, "{{{dataType}}}", "{{dataFormat}}"),
             contentType
         );
         requestContext.setBody(serializedBody);
+        {{/isBinary}}
         {{/bodyParam}}
 
         {{#hasAuthMethods}}
